@@ -1,80 +1,62 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Salesforce Admin 2026 実践ノック</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        .option-btn.selected { border-color: #4f46e5; background-color: #eef2ff; }
-        .option-btn.correct { border-color: #10b981; background-color: #ecfdf5; color: #065f46; box-shadow: 0 0 0 2px #10b981; }
-        .option-btn.wrong { border-color: #ef4444; background-color: #fef2f2; color: #991b1b; }
-        .transition-all { transition: all 0.2s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .animate-fadeIn { animation: fadeIn 0.4s ease forwards; }
-    </style>
-</head>
-<body class="bg-slate-50 min-h-screen p-4 md:p-8 text-slate-900 font-sans">
-    <div class="max-w-4xl mx-auto space-y-6">
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
-            <div class="flex justify-between items-start">
-                <div>
-                    <h1 class="text-2xl font-black text-indigo-600 tracking-tighter italic">SF Admin 2026 Knock</h1>
-                    <div id="weak-categories" class="text-[11px] font-bold text-rose-500 mt-1 uppercase tracking-widest bg-rose-50 px-2 py-0.5 rounded inline-block">弱点: 分析中...</div>
-                </div>
-                <div id="stats-display" class="text-right font-bold text-slate-500">
-                    <div class="text-[10px] uppercase opacity-60">Accuracy</div>
-                    <div id="accuracy-rate" class="text-2xl text-indigo-600 leading-none">0%</div>
-                    <div id="stat-details" class="text-[10px] mt-1 opacity-70 tracking-tighter text-slate-400 font-mono">OK:0 / TRY:0</div>
-                </div>
-            </div>
-            
-            <div class="flex flex-wrap gap-2 pt-2 border-t border-slate-100">
-                <select id="category-filter" class="border p-2 rounded-lg bg-white text-xs font-bold focus:ring-2 focus:ring-indigo-200 outline-none cursor-pointer"></select>
-                <button id="review-mode-btn" class="border px-4 py-2 rounded-lg text-xs bg-white hover:bg-rose-50 text-rose-600 font-black transition-colors shadow-sm">❌ 復習モード: OFF</button>
-                <button id="random-btn" class="border px-4 py-2 rounded-lg text-xs bg-white hover:bg-slate-50 font-black shadow-sm">🔄 番号順</button>
-                <input type="text" id="search-input" placeholder="検索..." class="border p-2 rounded-lg flex-1 text-xs focus:ring-2 focus:ring-indigo-200 outline-none">
-                <button id="reset-stats" class="text-[10px] text-slate-300 hover:text-rose-500 underline transition-colors">リセット</button>
-            </div>
-        </div>
-
-        <div class="bg-white p-6 md:p-12 rounded-[2.5rem] shadow-2xl border border-slate-200 relative overflow-hidden min-h-[500px]">
-            <div class="flex justify-between items-center mb-4">
-                <span id="progress-badge" class="bg-indigo-600 text-white text-[10px] font-black px-4 py-1.5 rounded-full uppercase tracking-widest shadow-lg shadow-indigo-200"></span>
-                <span id="category-badge" class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Category Name</span>
-            </div>
-            
-            <div class="w-full bg-slate-100 h-2 rounded-full mb-10 overflow-hidden shadow-inner">
-                <div id="progress-fill" class="bg-gradient-to-r from-indigo-500 to-blue-400 h-full transition-all duration-700 ease-out" style="width: 0%"></div>
-            </div>
-            
-            <div class="space-y-8">
-                <h2 id="question-text" class="text-xl md:text-2xl font-bold leading-tight text-slate-800 tracking-tight"></h2>
-                <div id="options-container" class="grid gap-4"></div>
-            </div>
-
-            <div class="mt-12 flex flex-col gap-4">
-                <button id="submit-btn" class="w-full bg-indigo-600 text-white py-5 rounded-2xl font-black text-lg shadow-xl hover:bg-indigo-700 hover:shadow-indigo-200 transition-all disabled:opacity-20 disabled:cursor-not-allowed transform active:scale-[0.97]">回答を確定する</button>
-                
-                <div id="explanation-box" class="hidden animate-fadeIn p-8 rounded-3xl border-2 border-emerald-100 bg-emerald-50/50 backdrop-blur-sm">
-                    <div class="flex items-center gap-3 mb-3">
-                        <div class="bg-emerald-500 text-white p-1 rounded-full text-sm">✓</div>
-                        <p class="font-black text-emerald-800 text-sm uppercase tracking-widest">2026 Admin Insight</p>
-                    </div>
-                    <p id="explanation-text" class="text-emerald-700 leading-relaxed font-medium text-sm md:text-base"></p>
-                </div>
-            </div>
-
-            <div class="flex justify-between items-center mt-12 pt-8 border-t border-slate-100">
-                <button id="prev-btn" class="text-slate-300 font-black hover:text-indigo-600 transition-colors px-6 py-2 disabled:opacity-0">← PREV</button>
-                <button id="next-btn" class="bg-slate-900 text-white px-12 py-3 rounded-2xl font-black hover:bg-slate-800 transition-all transform active:scale-95 shadow-xl">NEXT</button>
-            </div>
-        </div>
-        
-        <p class="text-center text-slate-400 text-[10px] font-bold tracking-widest uppercase pb-10">Salesforce Certified Administrator 2026 Prep Tool</p>
-    </div>
-
-    <script src="questions-data.js"></script>
-    <script src="app.js"></script>
-</body>
-</html>
+const QUESTIONS_DATA = [
+    { id: 1, category: "AI & Agentforce", question: "AIエージェントが顧客情報を外部に送信する際、自動でマスキングを行いたい。何を使用すべきか？", options: [{id:"A", text:"共有ルール"}, {id:"B", text:"Einstein Trust Layer"}, {id:"C", text:"データクリーン"}, {id:"D", text:"フィールド暗号化"}], correctAnswer: ["B"], explanation: "Einstein Trust Layerは、データの安全性を確保し、LLMへの送信前に情報を自動保護する標準レイヤーです。" },
+    { id: 2, category: "AI & Agentforce", question: "AIエージェントに「1,000万円以上の商談は上席へ回す」と教えたい。設定場所は？", options: [{id:"A", text:"Agent Builderの指示"}, {id:"B", text:"ワークフロールール"}, {id:"C", text:"会社情報"}, {id:"D", text:"項目履歴"}], correctAnswer: ["A"], explanation: "Agent Builderの「Instructions（指示）」に記述することでAIの行動指針を定義します。" },
+    { id: 3, category: "自動化 (Flow)", question: "複雑なフローのドラフトをAIに作成させたい。どの機能を使用するか？", options: [{id:"A", text:"Flow Debugger"}, {id:"B", text:"Data Cloud"}, {id:"C", text:"Agentforce for Flow"}, {id:"D", text:"クイックアクション"}], correctAnswer: ["C"], explanation: "Agentforce for Flowを使用すると、自然言語の指示からフローの構成を自動生成できます。" },
+    { id: 4, category: "セキュリティ", question: "2026年以降、Salesforceが推奨するユーザー権限の管理方法は？", options: [{id:"A", text:"プロフィールのコピー"}, {id:"B", text:"権限セット / グループ"}, {id:"C", text:"共有設定の一般公開"}, {id:"D", text:"ユーザーレコードの編集"}], correctAnswer: ["B"], explanation: "プロフィールでの直接権限管理は非推奨化されており、権限セットによる柔軟な管理が標準です。" },
+    { id: 5, category: "セキュリティ", question: "権限セットグループ内で、特定の権限1つだけを「無効」にしたい。何を使う？", options: [{id:"A", text:"プロフィールの変更"}, {id:"B", text:"削除権限の取り消し"}, {id:"C", text:"ミュート権限セット"}, {id:"D", text:"共有ルール"}], correctAnswer: ["C"], explanation: "ミュート権限セットは、グループ内で特定の権限のみを「打ち消す」ための最新機能です。" },
+    { id: 6, category: "Data Cloud", question: "複数のシステムにある「佐藤一郎」を同一人物として統合したい。何を使う？", options: [{id:"A", text:"重複ルール"}, {id:"B", text:"Data CloudのID解決"}, {id:"C", text:"データローダ"}, {id:"D", text:"名寄せウィザード"}], correctAnswer: ["B"], explanation: "Data CloudのID解決（Identity Resolution）で、異なるソースから統合プロフィールを作成します。" },
+    { id: 7, category: "Data Cloud", question: "Data Cloudに取り込んだ外部データを、商談画面に表示させたい。何を設定するか？", options: [{id:"A", text:"カスタム項目の作成"}, {id:"B", text:"データマッピング"}, {id:"C", text:"アウトバウンドメッセージ"}, {id:"D", text:"外部IDの付与"}], correctAnswer: ["B"], explanation: "外部データ（DSO）をSalesforceのデータモデル（DMO）に紐付けるマッピング設定が必要です。" },
+    { id: 8, category: "Lightning構成", question: "レコードタイプを使わずに、フェーズによって項目を出し分けたい。何を使う？", options: [{id:"A", text:"ページレイアウト"}, {id:"B", text:"割り当てルール"}, {id:"C", text:"動的フォーム (Dynamic Forms)"}, {id:"D", text:"入力規則"}], correctAnswer: ["C"], explanation: "動的フォーム（Dynamic Forms）により、アプリビルダー上で項目の表示条件を詳細に設定できます。" },
+    { id: 9, category: "自動化 (Flow)", question: "同じレコード内の項目更新を行う際、最も処理速度が速い自動化ツールは？", options: [{id:"A", text:"保存後フロー"}, {id:"B", text:"プロセスビルダー"}, {id:"C", text:"保存前フロー (Before-save)"}, {id:"D", text:"ワークフロールール"}], correctAnswer: ["C"], explanation: "Before-saveフローは、データベースへの保存直前に実行されるため、圧倒的に高速です。" },
+    { id: 10, category: "セキュリティ", question: "ユーザーがパスワードなしで指紋認証等でログインできるようにしたい。機能名は？", options: [{id:"A", text:"2要素認証"}, {id:"B", text:"パスキー (Passkeys)"}, {id:"C", text:"シングルサインオン"}, {id:"D", text:"セキュリティトークン"}], correctAnswer: ["B"], explanation: "パスキーはMFAの手間を減らしつつセキュリティを高める最新のパスワードレス認証です。" },
+    { id: 11, category: "AI & Agentforce", question: "AIが過去のメールを要約して表示するようにしたい。設定場所は？", options: [{id:"A", text:"ページレイアウト"}, {id:"B", text:"Prompt Builder"}, {id:"C", text:"Chatter設定"}, {id:"D", text:"活動タイムライン"}], correctAnswer: ["B"], explanation: "Prompt Builderで要約用プロンプトテンプレートを作成し、画面にコンポーネントとして配置します。" },
+    { id: 12, category: "AI & Agentforce", question: "AIエージェントに社内の製品マニュアルを学習させたい。何が必要か？", options: [{id:"A", text:"Salesforce ナレッジ"}, {id:"B", text:"PDFのアップロード"}, {id:"C", text:"商談の説明項目"}, {id:"D", text:"外部サイトのURL"}], correctAnswer: ["A"], explanation: "ナレッジ記事は、AIエージェントにとって最も信頼できる「公式な知識ソース」となります。" },
+    { id: 13, category: "AI & Agentforce", question: "AIエージェントが勝手にメールを送らないよう、必ず人間の承認を得るようにしたい。設定は？", options: [{id:"A", text:"承認プロセス"}, {id:"B", text:"確認プロンプトの設定"}, {id:"C", text:"共有ルールの強化"}, {id:"D", text:"フローの停止"}], correctAnswer: ["B"], explanation: "AIのアクション実行前に「確認」を挟む、Human-in-the-loopを実現する設定です。" },
+    { id: 14, category: "システム設定", question: "セットアップ画面で、どの設定をすべきかAIに質問したい。何を使用するか？", options: [{id:"A", text:"Salesforce Help"}, {id:"B", text:"Trailhead"}, {id:"C", text:"Setup with Agentforce"}, {id:"D", text:"カスタマーサポート"}], correctAnswer: ["C"], explanation: "Setup with Agentforceは、設定画面内でAIが管理作業のアシストや自動実行を行ってくれる機能です。" },
+    { id: 15, category: "セキュリティ", question: "組織全体のセキュリティ状況を一目で確認・修正できるツールは？", options: [{id:"A", text:"セッション設定"}, {id:"B", text:"パスワードポリシー"}, {id:"C", text:"ヘルスチェック (Health Check)"}, {id:"D", text:"項目履歴管理"}], correctAnswer: ["C"], explanation: "ヘルスチェックは組織の設定をスキャンし、推奨されるセキュリティ基準との乖離を特定します。" },
+    { id: 16, category: "Data Cloud", question: "特定地域ごとにData Cloud内のデータを論理的に切り分けたい。用語は？", options: [{id:"A", text:"ロール"}, {id:"B", text:"データスペース (Data Space)"}, {id:"C", text:"プロファイル"}, {id:"D", text:"ディビジョン"}], correctAnswer: ["B"], explanation: "データスペースは、Data Cloudのデータ、インサイト、アクションを論理的に分離する単位です。" },
+    { id: 17, category: "自動化 (Flow)", question: "フローがエラーになった際、管理者へ原因を分かりやすく通知する2026年の新機能は？", options: [{id:"A", text:"メールアラート"}, {id:"B", text:"デバッグログ"}, {id:"C", text:"中央エラーコンソール"}, {id:"D", text:"障害パス"}], correctAnswer: ["C"], explanation: "中央エラーコンソールにより、組織内のすべてのフローエラーを一元管理・分析できます。" },
+    { id: 18, category: "Lightning構成", question: "画面フロー内に、レコードの一覧をかんばん形式で表示したい。何を使う？", options: [{id:"A", text:"関連リスト"}, {id:"B", text:"Flow Kanbanコンポーネント"}, {id:"C", text:"カスタムLWC"}, {id:"D", text:"ダッシュボード"}], correctAnswer: ["B"], explanation: "Flow Kanbanは2026年に追加された、フロー内での視覚的操作を可能にする標準コンポーネントです。" },
+    { id: 19, category: "Data Cloud", question: "ユーザーが「自分のデータをAIの学習から除外してほしい」と言った際の管理方法。", options: [{id:"A", text:"レコードの削除"}, {id:"B", text:"プライバシー同意設定"}, {id:"C", text:"プロフィールの変更"}, {id:"D", text:"フィールドの隠蔽"}], correctAnswer: ["B"], explanation: "個人の意思（Consent）をフラグ管理し、Data Cloudの計算対象から除外することでプライバシーを保護します。" },
+    { id: 20, category: "自動化 (Flow)", question: "大量のリードを夜間に一括でクリーニングしたい。最適なフローは？", options: [{id:"A", text:"レコードトリガーフロー"}, {id:"B", text:"スケジュールトリガーフロー"}, {id:"C", text:"画面フロー"}, {id:"D", text:"自動起動フロー"}], correctAnswer: ["B"], explanation: "スケジュールトリガーフローは、指定時刻に起動し、条件に合う大量レコードをバッチ処理するのに適しています。" },
+    { id: 21, category: "Lightning構成", question: "モバイルアプリから見た時だけ、特定のボタンを表示したい。設定場所は？", options: [{id:"A", text:"ページレイアウト"}, {id:"B", text:"動的アクションのデバイスフィルタ"}, {id:"C", text:"プロフィール"}, {id:"D", text:"会社情報"}], correctAnswer: ["B"], explanation: "動的アクションの設定で、項目の可視性（Form Factor = Phone）を指定することで実現可能です。" },
+    { id: 22, category: "オブジェクト項目", question: "商談に、複数の連絡先を「紹介者」などの役割付きで紐付けたい。何を使う？", options: [{id:"A", text:"参照項目"}, {id:"B", text:"取引先責任者の役割"}, {id:"C", text:"主従関係"}, {id:"D", text:"パートナーチーム"}], correctAnswer: ["B"], explanation: "取引先責任者の役割は、1つの商談に複数の連絡先とその役割をマッピングする標準機能です。" },
+    { id: 23, category: "システム設定", question: "組織のデフォルト通貨とは別の通貨でレポートを確認したい。どこを設定するか？", options: [{id:"A", text:"会社情報"}, {id:"B", text:"ユーザー個人の個人通貨"}, {id:"C", text:"レポートのフィルタ"}, {id:"D", text:"通貨ロケール"}], correctAnswer: ["B"], explanation: "各ユーザーは個人設定の「個人通貨」を変更することで、自分が見る数値を任意の通貨に換算できます。" },
+    { id: 24, category: "自動化 (Flow)", question: "外部の天気情報をフローから直接呼び出したい（コード不要）。機能名は？", options: [{id:"A", text:"Apexアクション"}, {id:"B", text:"HTTP コールアウト"}, {id:"C", text:"アウトバウンドメッセージ"}, {id:"D", text:"外部サービス連携"}], correctAnswer: ["B"], explanation: "HTTPコールアウト機能により、プログラミングなしで外部APIとの連携をフロー内で定義できます。" },
+    { id: 25, category: "Lightning構成", question: "商談の成立時に、自動的に「お祝い」のアニメーションを出すには？", options: [{id:"A", text:"入力規則"}, {id:"B", text:"パスの「お祝い」設定"}, {id:"C", text:"フロー"}, {id:"D", text:"カスタムCSS"}], correctAnswer: ["B"], explanation: "パスの設定で、特定のフェーズ到達時に紙吹雪を舞わせる演出（お祝い）を追加できます。" },
+    { id: 26, category: "セキュリティ", question: "ユーザーに「参照」権限はあるのに、レポートで項目が見えない。原因は？", options: [{id:"A", text:"項目レベルセキュリティ(FLS)"}, {id:"B", text:"共有ルール"}, {id:"C", text:"フォルダ権限"}, {id:"D", text:"ロール階層"}], correctAnswer: ["A"], explanation: "オブジェクトの参照権限があっても、項目単位の参照許可（FLS）がないとデータは見えません。" },
+    { id: 27, category: "ユーザー権限", question: "ユーザーを「無効化」できないが、今すぐログインを阻止したい。どうするか？", options: [{id:"A", text:"パスワードの変更"}, {id:"B", text:"ユーザーの凍結 (Freeze)"}, {id:"C", text:"プロフィールの削除"}, {id:"D", text:"ロールの解除"}], correctAnswer: ["B"], explanation: "凍結ボタンを使用すると、レコード所有権などの参照を維持したままログインのみを即座に遮断できます。" },
+    { id: 28, category: "分析", question: "レポートで、特定の数値を超えた行を赤く塗りたい。どの機能を使う？", options: [{id:"A", text:"集計数式"}, {id:"B", text:"条件付き書式"}, {id:"C", text:"バケット列"}, {id:"D", text:"ダッシュボードフィルタ"}], correctAnswer: ["B"], explanation: "条件付き書式により、特定の閾値に基づいてセルの背景色やフォントカラーを自動変更できます。" },
+    { id: 29, category: "オブジェクト項目", question: "取引先に紐づく「商談の総件数」をリアルタイムで表示したい。項目の種類は？", options: [{id:"A", text:"数式項目"}, {id:"B", text:"積み上げ集計項目"}, {id:"C", text:"フローでの更新項目"}, {id:"D", text:"参照項目"}], correctAnswer: ["B"], explanation: "積み上げ集計項目は、主従関係の親レコード側で、子レコードの件数や合計金額を自動計算します。" },
+    { id: 30, category: "データ管理", question: "誤ってインポートした1,000件のリードを、一括で削除したい。どうすべきか？", options: [{id:"A", text:"一括削除ツール / データローダ"}, {id:"B", text:"1件ずつ手動"}, {id:"C", text:"ごみ箱の空にする"}, {id:"D", text:"会社情報の削除"}], correctAnswer: ["A"], explanation: "一括削除ツールまたはデータローダのDelete機能を使用するのが最も効率的です。" },
+    { id: 31, category: "AI & Agentforce", question: "AIが顧客とのメールを自動作成する際のベースとなるテンプレートの作成ツールは？", options: [{id:"A", Word:"Word"}, {id:"B", text:"Prompt Builder"}, {id:"C", text:"電子メールテンプレート"}, {id:"D", text:"Chatter"}], correctAnswer: ["B"], explanation: "Prompt Builderは、AIが動的なデータ（レコード値等）を取り込んで文章生成するための雛形を構築します。" },
+    { id: 32, category: "AI & Agentforce", question: "AIエージェントに「お客様の予算を聞き出す」という指示を与える場所は？", options: [{id:"A", text:"項目名"}, {id:"B", text:"Agent BuilderのInstruction"}, {id:"C", text:"取引先の設定"}, {id:"D", text:"フローの決定要素"}], correctAnswer: ["B"], explanation: "Agent BuilderのInstruction（指示）フィールドに、対話中の目的やルールを記述します。" },
+    { id: 33, category: "データ管理", question: "データのインポート時、重複したデータを入れたくない。何を使うべきか？", options: [{id:"A", text:"入力規則"}, {id:"B", text:"一致ルール / 重複ルール"}, {id:"C", text:"データローダ"}, {id:"D", text:"共有設定"}], correctAnswer: ["B"], explanation: "一致ルールで重複を検知し、重複ルールでアラートや保存のブロックを制御します。" },
+    { id: 34, category: "オブジェクト項目", question: "「商談が失注したら、失注理由を必須にする」という制御を行いたい。最善策は？", options: [{id:"A", text:"項目を必須にする"}, {id:"B", text:"入力規則"}, {id:"C", text:"フロー"}, {id:"D", text:"ページレイアウト"}], correctAnswer: ["B"], explanation: "入力規則で「フェーズが失注」かつ「理由が空白」という条件でエラーを発生させるのが標準的です。" },
+    { id: 35, category: "セキュリティ", question: "ユーザーがログインできる時間を、月〜金の9時〜18時に制限したい。設定場所は？", options: [{id:"A", text:"プロフィールのログイン時間制限"}, {id:"B", text:"会社情報"}, {id:"C", text:"権限セット"}, {id:"D", text:"認証設定"}], correctAnswer: ["A"], explanation: "ログイン時間制限はプロフィールごとに設定可能です。範囲外のアクセスは自動的に拒否されます。" },
+    { id: 36, category: "Data Cloud", question: "外部のAWS S3にあるデータを、Salesforceに移動せずに使いたい。どの技術を使う？", options: [{id:"A", text:"データストリーム"}, {id:"B", text:"データフェデレーション (BYOH)"}, {id:"C", text:"外部ID"}, {id:"D", text:"フロー"}], correctAnswer: ["B"], explanation: "Bring Your Own House (BYOH) フェデレーションにより、外部にあるデータを仮想的に結合して利用できます。" },
+    { id: 37, category: "分析", question: "ダッシュボードで、特定の部署のデータに絞り込んで見たい。閲覧者が操作する箇所は？", options: [{id:"A", text:"レポートの編集"}, {id:"B", text:"ダッシュボードフィルタ"}, {id:"C", text:"共有ルールの変更"}, {id:"D", text:"フォルダの移動"}], correctAnswer: ["B"], explanation: "ダッシュボードフィルタを配置することで、閲覧者が動的に条件を選択して表示結果を絞り込めます。" },
+    { id: 38, category: "システム設定", question: "ユーザーがいつログインしたか、どのブラウザを使ったか等を確認する場所は？", options: [{id:"A", text:"設定変更履歴"}, {id:"B", text:"ログイン履歴"}, {id:"C", text:"イベントモニタリング"}, {id:"D", text:"デバッグログ"}], correctAnswer: ["B"], explanation: "ログイン履歴からは、IP、ブラウザ、ログイン試行結果などの詳細を過去6ヶ月分確認できます。" },
+    { id: 39, category: "自動化 (Flow)", question: "フロー作成中、以前実行したデバッグ時の入力値を再利用したい。機能名は？", options: [{id:"A", text:"変数のコピー"}, {id:"B", text:"永続的デバッグセッション"}, {id:"C", text:"フローの保存"}, {id:"D", text:"キャッシュのクリア"}], correctAnswer: ["B"], explanation: "永続的デバッグセッションにより、テスト値を再入力する手間を省き、効率的にデバッグが可能です。" },
+    { id: 40, category: "自動化 (Flow)", question: "顧客に「完了メール」を自動で送りたいが、内容を動的に変えたい。何が最適か？", options: [{id:"A", text:"ワークフロー"}, {id:"B", text:"レコードトリガーフロー (After-save)"}, {id:"C", text:"入力規則"}, {id:"D", text:"ページレイアウト"}], correctAnswer: ["B"], explanation: "After-saveフローはレコードの保存後に実行され、メール送信などのアクションを柔軟に制御できます。" },
+    { id: 41, category: "セキュリティ", question: "2026年、新規に権限を付与する際に最も避けるべき（非推奨）操作は？", options: [{id:"A", text:"権限セットの作成"}, {id:"B", text:"プロフィールの直接編集"}, {id:"C", text:"フローの有効化"}, {id:"D", text:"共有ルールの追加"}], correctAnswer: ["B"], explanation: "プロフィールでの権限管理は将来的に廃止される方向であり、権限セットでの管理が強く推奨されています。" },
+    { id: 42, category: "AI & Agentforce", question: "AIエージェントのアクション（行動）を業務ごとにグループ化して管理する単位は？", options: [{id:"A", text:"オブジェクト"}, {id:"B", text:"トピック (Topic)"}, {id:"C", text:"レコードタイプ"}, {id:"D", text:"フォルダ"}], correctAnswer: ["B"], explanation: "トピック（Topic）を使用することで、エージェントが扱う業務領域ごとにアクションを整理・管理します。" },
+    { id: 43, category: "データ管理", question: "データのエクスポートが毎週自動で実行されるようにしたい。どのツールを使う？", options: [{id:"A", text:"データローダ"}, {id:"B", text:"データエクスポートサービス"}, {id:"C", text:"レポートの購読"}, {id:"D", text:"フロー"}], correctAnswer: ["B"], explanation: "データエクスポートサービスは、組織全体のバックアップをスケジュール実行するための標準機能です。" },
+    { id: 44, category: "自動化 (Flow)", question: "画面フローで、前の設問で「はい」と答えた時だけ次の項目を出したい。設定方法は？", options: [{id:"A", text:"決定要素で画面を分ける"}, {id:"B", text:"項目の条件付き表示"}, {id:"C", text:"入力規則"}, {id:"D", text:"ページレイアウト"}], correctAnswer: ["B"], explanation: "項目のプロパティで「表示条件（Visibility）」を設定することで、同一画面内の動的な制御が可能です。" },
+    { id: 45, category: "オブジェクト項目", question: "1つの商談を複数の営業担当で「収益を分ける」ための機能は何か？", options: [{id:"A", text:"取引先チーム"}, {id:"B", text:"商談分割 (Opportunity Splits)"}, {id:"C", text:"フロー"}, {id:"D", text:"共有ルール"}], correctAnswer: ["B"], explanation: "商談分割は、成立金額をチームメンバーの貢献度（％）に応じて分配するための標準機能です。" },
+    { id: 46, category: "システム設定", question: "カスタム項目のラベル（表示名）を変更した。保存されているデータはどうなる？", options: [{id:"A", text:"全て消える"}, {id:"B", text:"データは保持される"}, {id:"C", text:"自動でバックアップされる"}, {id:"D", text:"文字列のみ消える"}], correctAnswer: ["B"], explanation: "ラベルの変更は表示名が変わるだけなので、データベースに格納されている値には影響しません。" },
+    { id: 47, category: "自動化 (Flow)", question: "承認プロセスの「承認者」を、申請時にユーザーが手動で選べるようにしたい。設定可能か？", options: [{id:"A", text:"不可能"}, {id:"B", text:"「手動選択」オプションで可能"}, {id:"C", text:"フローでのみ可能"}, {id:"D", text:"ロール階層のみ"}], correctAnswer: ["B"], explanation: "承認プロセスでは、承認者の割り当て方法として「申請者が手動で選択する」設定を選択可能です。" },
+    { id: 48, category: "Data Cloud", question: "Data Cloudの「計算済みインサイト」を使用する最大のメリットは何か？", options: [{id:"A", text:"項目の削除"}, {id:"B", text:"大量データのリアルタイム集計"}, {id:"C", text:"ページ速度の向上"}, {id:"D", text:"名寄せ"}], correctAnswer: ["B"], explanation: "数億件規模の膨大なデータに対して、CRM側に負荷をかけず高度な集計結果をリアルタイムに提供できる点です。" },
+    { id: 49, category: "Lightning構成", question: "ユーザーに「特定のレコードタイプ」のみを使わせたい。どこで設定すべきか？", options: [{id:"A", text:"権限セット"}, {id:"B", text:"プロフィール (または権限セット)"}, {id:"C", text:"ページレイアウト"}, {id:"D", text:"ロール"}], correctAnswer: ["B"], explanation: "レコードタイプの割り当て許可は、プロファイル（または権限セット）の設定画面で行います。" },
+    { id: 50, category: "Lightning構成", question: "レコードページの「関連リスト」に表示される項目（列）を変えたい。どこを編集するか？", options: [{id:"A", text:"アプリビルダー"}, {id:"B", text:"ページレイアウト"}, {id:"C", text:"コンパクトレイアウト"}, {id:"D", text:"検索レイアウト"}], correctAnswer: ["B"], explanation: "関連リストに表示される列（フィールド）は、親オブジェクト側のページレイアウト設定で定義されます。" },
+    { id: 51, category: "AI & Agentforce", question: "AIエージェントが「回答できない」と判定した際の理由（思考プロセス）を確認する場所は？", options: [{id:"A", text:"ログイン履歴"}, {id:"B", text:"エージェントのデバッグログ"}, {id:"C", text:"セットアップ監査証跡"}, {id:"D", text:"項目履歴"}], correctAnswer: ["B"], explanation: "エージェントの思考プロセスや理由付けは、専用のデバッグログやダッシュボードで詳細を確認できます。" },
+    { id: 52, category: "ユーザー権限", question: "複数の権限セットを、1つの「営業リーダー用」パッケージとしてまとめたい。機能名は？", options: [{id:"A", text:"プロフィール"}, {id:"B", text:"権限セットグループ"}, {id:"C", text:"公開グループ"}, {id:"D", text:"ロール"}], correctAnswer: ["B"], explanation: "権限セットグループを使用すると、複数の権限セットを束ねて、1つの単位としてユーザーに割り当てられます。" },
+    { id: 53, category: "Lightning構成", question: "取引先の「年間収益」が一定額以上の時だけ画面に警告を表示したい。最も簡単な方法は？", options: [{id:"A", text:"入力規則"}, {id:"B", text:"リッチテキストコンポーネントの可視性設定"}, {id:"C", text:"フローの作成"}, {id:"D", text:"コンパクトレイアウトの変更"}], correctAnswer: ["B"], explanation: "アプリビルダーでリッチテキストを配置し、表示条件（可視性）に数値項目を指定するのが最も簡便です。" },
+    { id: 54, category: "セキュリティ", question: "セキュリティポリシーとして、パスワードの有効期限を設定したい。管理場所は？", options: [{id:"A", text:"会社情報"}, {id:"B", text:"プロファイルのパスワードポリシー"}, {id:"C", text:"セッション設定"}, {id:"D", text:"ネットワーク設定"}], correctAnswer: ["B"], explanation: "パスワードの複雑さや有効期限は、各プロファイルの詳細画面にあるパスワードポリシーで設定します。" },
+    { id: 55, category: "Data Cloud", question: "Data Cloudが外部ソースからデータを取り込む口（コネクタ設定）の名称は？", options: [{id:"A", text:"データマッピング"}, {id:"B", text:"データストリーム"}, {id:"C", text:"ID解決"}, {id:"D", text:"外部オブジェクト"}], correctAnswer: ["B"], explanation: "データストリーム（Data Stream）は、Data Cloudへデータを流し込むための最初の設定単位です。" },
+    { id: 56, category: "セキュリティ", question: "特定の「IPアドレス範囲」以外からのログインを完全に禁止したい。どこで設定するか？", options: [{id:"A", text:"組織全体のデフォルト"}, {id:"B", text:"プロファイルのログインIP制限"}, {id:"C", text:"セッション設定"}, {id:"D", text:"ネットワーク設定"}], correctAnswer: ["B"], explanation: "プロフィールにIP制限をかけると、その範囲外からのログインを「許可なく試行」することすらできなくなります。" },
+    { id: 57, category: "オブジェクト項目", question: "「1対多」の関係において、親レコードを消しても子レコードを残したい。適切な関係は？", options: [{id:"A", text:"主従関係"}, {id:"B", text:"参照関係"}, {id:"C", text:"間接参照"}, {id:"D", text:"階層関係"}], correctAnswer: ["B"], explanation: "参照関係は、親レコードの削除時に「項目をクリア」または「削除を制限」でき、子を保護できます。" },
+    { id: 58, category: "データ管理", question: "リードから変換された「商談」に、リード時のデータを自動で引き継ぎたい。必要な手順は？", options: [{id:"A", text:"自動で行われる"}, {id:"B", text:"リード項目のマッピング設定"}, {id:"C", text:"フローの作成"}, {id:"D", text:"プロフィールの編集"}], correctAnswer: ["B"], explanation: "カスタム項目の引き継ぎには、リード設定画面での「リード項目のマッピング」設定が不可欠です。" },
+    { id: 59, category: "システム設定", question: "2026年、新規の管理者が自動化を構築する際に、まず最初に検討すべきツールは？", options: [{id:"A", text:"ワークフロー"}, {id:"B", text:"Flow Builder"}, {id:"C", text:"Apexコード"}, {id:"D", text:"プロセスビルダー"}], correctAnswer: ["B"], explanation: "他のノンコードツールは廃止予定、または専門知識が必要なため、現在はFlow Builder一択です。" },
+    { id: 60, category: "ユーザー権限", question: "試験で「最小限の権限」や「メンテナンス性」を問われた際の基本的な考え方は？", options: [{id:"A", text:"常に新しいプロフィールを作る"}, {id:"B", text:"標準機能と権限セットを組み合わせる"}, {id:"C", text:"プログラムで制御する"}, {id:"D", text:"全てのユーザーを管理者に設定する"}], correctAnswer: ["B"], explanation: "Salesforceの推奨は、肥大化するプロフィールを避け、柔軟な権限セットで差分管理を行うことです。" }
+];
